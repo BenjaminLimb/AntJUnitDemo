@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created following tutorial @ https://www.youtube.com/watch?v=ERbyZlyM_d4 -->
+
+<project default="run" name="Exlipse Ant JUnit Demo" xmlns:ivy="antlib:org.apache.ivy.ant">
+  <target name="clean">
+    <echo>=== CLEAN ===</echo>
+    <delete failonerror="false">
+      <fileset dir="${dest.dir}" includes="**/*" />
+    </delete>
+    <delete dir="${temp.dir}" />
+  </target>
+
+  <!-- See https://stackoverflow.com/questions/16947753/how-to-add-ivy-to-ant-dynamically -->
+  <target name="bootstrap" description="Install ivy">
+    <echo>=== BOOTSTRAP IVY ===</echo>
+    <mkdir dir="${user.home}/.ant/lib" />
+    <get dest="${user.home}/.ant/lib/ivy.jar"
+      src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar" />
+  </target>
+
+  <target name="jar">
+    <mkdir dir="build/jar" />
+    <jar destfile="build/jar/HelloWorld.jar" basedir="build/classes">
+      <manifest>
+        <attribute name="Main-Class" value="oata.HelloWorld" />
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="run" depends="runjunit">
+    <echo>=== RUN ===</echo>
+    <java classname="com.benjaminlimb.antJUnitTutorial.Main">
+      <classpath path="staging" />
+    </java>
+  </target>
+
+  <target name="runjunit" depends="compile">
+    <echo>=== RUN JUNIT ===</echo>
+    <junit printsummary="on">
+    <test name="com.benjaminlimb.antJUnitTutorial.TestMain"></test>
+    <classpath>
+    <pathelement location="/Users/benjaminlimb/.p2/pool/plugins/org.junit_4.12.0.v201504281640/junit.jar" />
+    <!-- <pathelement location="staging" />   -->
+    </classpath>
+    
+    </junit>
+  </target>
+
+  <target name="compile" depends="resolve">
+    <echo>=== COMPLIE ===</echo>
+    <mkdir dir="staging" />
+    <javac includeantruntime="false" srcdir="./src" destdir="staging"
+      classpath="/Users/benjaminlimb/.p2/pool/plugins/org.junit_4.12.0.v201504281640/junit.jar:/Users/benjaminlimb/sandbox/AntJUnitTutorial/lib/junit-4.12-sources.jar" />
+  </target>
+
+  <target name="resolve">
+    <ivy:retrieve />
+  </target>
+
+</project>
